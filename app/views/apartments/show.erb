@@ -19,9 +19,12 @@
         </div>
         <div class="pull-left" style="margin:20px;">
           <table class="table table-striped">
-            <%= render :partial => "tableitem", :locals => { :label => "Rent", :value => @apartment.rent } %>
+            <%= render :partial => "tableitem", :locals => { :label => "Offer price", :value => @apartment.rent } %>
+            <%= render :partial => "tableitem", :locals => { :label => "Debt", :value => @apartment.debt } %>
+            <%= render :partial => "tableitem", :locals => { :label => "Total price", :value => @apartment.totalprice } %>
             <%= render :partial => "tableitem", :locals => { :label => "Deposit", :value => @apartment.deposit } %>
             <%= render :partial => "tableitem", :locals => { :label => "Size", :value => @apartment.size } %>
+            <%= render :partial => "tableitem", :locals => { :label => "Bedrooms", :value => @apartment.bedrooms } %>
             <%= render :partial => "tableitem", :locals => { :label => "Floor", :value => @apartment.floor } %>
             <%= render :partial => "tableitem", :locals => { :label => "Start date", :value => @apartment.start_date ? @apartment.start_date.strftime("%d %b %Y") : nil } %>
             <%= render :partial => "tableitem", :locals => { :label => "End date", :value => @apartment.end_date ? @apartment.end_date.strftime("%d %b %Y") : nil } %>

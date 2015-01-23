@@ -28,15 +28,19 @@ class Parser
       if image_src
         apartment.image_src = image_src['data-main']
       end
-      rent = page.search("div.mod//div.inner//dl.multicol//dd").first.inner_html
-      apartment.rent = rent ? rent.gsub(/[^0-9]/, "").to_i : nil 
-      deposit = nil
-      #deposit = get_value_of(price_infos, "Depositum").split(",").first
-      apartment.deposit = deposit ? deposit.gsub(/[^0-9]/, "").to_i : nil
-      house_info = parse_objectinfo(page, "Fakta om boligen")
+      price_infos = get_prices(page)
+      totalprice = get_value_of(price_infos, "Totalpris").split(",").first
+      puts "Price infos = #{price_infos} and totalprice=#{totalprice}"
+      apartment.totalprice = totalprice ? totalprice.gsub(/[^0-9]/, "").to_i : nil
+      offerprice = get_value_of(price_infos, "Prisantydning").split(",").first
+      apartment.rent = offerprice ? offerprice.gsub(/[^0-9]/, "").to_i : nil
+      commondebt = get_value_of(price_infos, "Fellesgjeld").split(",").first
+      apartment.debt = commondebt ? commondebt.gsub(/[^0-9]/, "").to_i : nil
+      house_info = parse_objectinfo(page, "Prisdetaljer")
       sizes = [get_value_of(house_info, "Primærrom"), get_value_of(house_info, "Boligareal"), get_value_of(house_info, "Bruksareal")]
       apartment.size = sizes.select { |x| x != "" }.first 
       apartment.floor = get_value_of(house_info, "Etasje").gsub(/[^0-9]/, "").to_i
+      apartment.bedrooms = get_value_of(house_info, "Soverom").gsub(/[^0-9]/, "").to_i
       apartment.location = page.search("div[@data-automation-id='map-container']//a").first.inner_html
       dates = get_value_of(house_info, "Leieperiode")
       if dates != ""
@@ -98,6 +102,17 @@ class Parser
     return apartments
   end
 
+  def get_prices(page)
+    result = []
+    target = page.search('div.mod//div.inner//div.bd.objectinfo').first
+      if target 
+        target.search('dl').each do |element|
+          extract_from_dtable(result, element)
+        end
+      end
+    return result
+  end
+
   private 
   def get_value_of(values, target)
     value = values.select { |x| x[target] }.first
@@ -129,7 +144,7 @@ class Parser
     result = []
     page.search('div.bd.objectinfo').each do |test|
       if test.search('h2').first && test.search('h2').first.inner_text == header
-        test.search('dl.multicol.colspan2').each do |element|
+        test.search('dl.multicol').each do |element|
           extract_from_dtable(result, element)
         end
       end
