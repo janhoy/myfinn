@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141121234126) do
+ActiveRecord::Schema.define(:version => 20150124001348) do
 
 # Could not dump table "apartments" because of following StandardError
 #   Unknown type 'bool' for column 'contacted'

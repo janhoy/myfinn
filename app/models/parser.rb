@@ -18,6 +18,7 @@ class Parser
     agent = Mechanize.new
     begin
       page = agent.get("#{BASE_PATH}#{finn_id}")
+      puts "page = #{page}\n"
     rescue Exception => ex
       return NOT_FOUND_ERROR
     end
@@ -34,11 +35,16 @@ class Parser
       apartment.totalprice = totalprice ? totalprice.gsub(/[^0-9]/, "").to_i : nil
       offerprice = get_value_of(price_infos, "Prisantydning").split(",").first
       apartment.rent = offerprice ? offerprice.gsub(/[^0-9]/, "").to_i : nil
+      if not apartment.totalprice && apartment.rent
+        apartment.totalprice = apartment.rent
+      end
       commondebt = get_value_of(price_infos, "Fellesgjeld").split(",").first
       apartment.debt = commondebt ? commondebt.gsub(/[^0-9]/, "").to_i : nil
       house_info = parse_objectinfo(page, "Prisdetaljer")
       sizes = [get_value_of(house_info, "Primærrom"), get_value_of(house_info, "Boligareal"), get_value_of(house_info, "Bruksareal")]
       apartment.size = sizes.select { |x| x != "" }.first 
+      apartment.sqm = apartment.size ? apartment.size.gsub(/[^0-9]/, "").to_i : nil
+      apartment.price_per_sqm = apartment.sqm ? apartment.totalprice / apartment.sqm : nil
       apartment.floor = get_value_of(house_info, "Etasje").gsub(/[^0-9]/, "").to_i
       apartment.bedrooms = get_value_of(house_info, "Soverom").gsub(/[^0-9]/, "").to_i
       apartment.location = page.search("div[@data-automation-id='map-container']//a").first.inner_html

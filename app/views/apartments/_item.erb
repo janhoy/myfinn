@@ -28,10 +28,16 @@
          <strong>Size: </strong>
          <span><%= apartment.size %></span>
        </div>
-       <% if apartment.floor != 0 %>
+       <% if apartment.floor != nil %>
          <div class="pull-left">
            <strong>Floor: </strong>
            <span><%= apartment.floor %></span>
+         </div>
+       <% end %>
+       <% if apartment.price_per_sqm != nil %>
+         <div class="pull-left">
+           <strong>Price/sqm: </strong>
+           <span><%= apartment.price_per_sqm %></span>
          </div>
        <% end %>
        <div style="clear:both;"></div>
